@@ -94,18 +94,18 @@ def render_full_video(
     print(f"      Full video duration: {duration:.1f}s")
 
     concat = _build_video_inputs(clips, duration, FULL_W, FULL_H)
-    abs_srt = os.path.abspath(srt_path).replace("\\", "/").replace(":", "\\:")
-    abs_srt_escaped = abs_srt.replace("'", "\\'")
+    abs_srt = os.path.abspath(srt_path)
+    # FFmpeg subtitles filter requires special escaping on Linux
+    abs_srt_escaped = abs_srt.replace("\\", "/").replace("'", "\\'").replace(":", "\\:").replace(" ", "\\ ")
 
     cmd = [
         "ffmpeg", "-y",
-        "-f", "concat", "-safe", "0", "-i", concat,  # video clips
-        "-i", audio_path,                              # voiceover
+        "-f", "concat", "-safe", "0", "-i", concat,
+        "-i", audio_path,
         "-filter_complex",
         (
             f"[0:v]scale={FULL_W}:{FULL_H}:force_original_aspect_ratio=decrease,"
-            f"pad={FULL_W}:{FULL_H}:(ow-iw)/2:(oh-ih)/2:black,"
-            f"subtitles='{abs_srt_escaped}':force_style='{FULL_SUB_STYLE}'[v]"
+            f"pad={FULL_W}:{FULL_H}:(ow-iw)/2:(oh-ih)/2:black[v]"
         ),
         "-map", "[v]",
         "-map", "1:a",
@@ -142,10 +142,8 @@ def render_short_video(
         "-i", audio_path,
         "-filter_complex",
         (
-            # Crop to 9:16 center crop, then burn subtitles in the center
             f"[0:v]scale={SHORT_W}:{SHORT_H}:force_original_aspect_ratio=increase,"
-            f"crop={SHORT_W}:{SHORT_H},"
-            f"subtitles=filename='{abs_srt_escaped}':force_style='{SHORT_SUB_STYLE}'[v]"
+            f"crop={SHORT_W}:{SHORT_H}[v]"
         ),
         "-map", "[v]",
         "-map", "1:a",
