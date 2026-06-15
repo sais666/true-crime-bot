@@ -1,0 +1,123 @@
+name: True Crime Bot — Maximum Output
+
+on:
+  schedule:
+    - cron: '0 7  * * *'   # Short 1  — 07:00 UTC peak morning mobile
+    - cron: '0 12 * * *'   # Short 2  — 12:00 UTC lunch spike
+    - cron: '0 17 * * *'   # Long-form — 17:00 UTC US afternoon peak
+    - cron: '0 21 * * *'   # Short 3  — 21:00 UTC evening prime time
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'What to run?'
+        required: true
+        default: 'short'
+        type: choice
+        options: [short, long, all]
+
+jobs:
+
+  # ── Short 1 · 07:00 UTC ──────────────────────────────────────
+  short-morning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 7 * * *') ||
+      (github.event_name == 'workflow_dispatch' && (github.event.inputs.mode == 'short' || github.event.inputs.mode == 'all'))
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11', cache: pip}
+      - run: sudo apt-get install -y ffmpeg
+      - run: pip install -r requirements.txt
+      - name: Run short pipeline
+        env:
+          PIPELINE_MODE: short
+          SHORT_HOOK_INDEX: "0"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: python scripts/main.py
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with: {name: "short1-logs-${{ github.run_id }}", path: logs/, retention-days: 5}
+
+  # ── Short 2 · 12:00 UTC ──────────────────────────────────────
+  short-midday:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 12 * * *')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11', cache: pip}
+      - run: sudo apt-get install -y ffmpeg
+      - run: pip install -r requirements.txt
+      - name: Run short pipeline
+        env:
+          PIPELINE_MODE: short
+          SHORT_HOOK_INDEX: "1"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: python scripts/main.py
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with: {name: "short2-logs-${{ github.run_id }}", path: logs/, retention-days: 5}
+
+  # ── Long-form · 17:00 UTC ────────────────────────────────────
+  long-afternoon:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 17 * * *') ||
+      (github.event_name == 'workflow_dispatch' && (github.event.inputs.mode == 'long' || github.event.inputs.mode == 'all'))
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11', cache: pip}
+      - run: sudo apt-get install -y ffmpeg
+      - run: pip install -r requirements.txt
+      - name: Run long-form pipeline
+        env:
+          PIPELINE_MODE: long
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: python scripts/main.py
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with: {name: "long-logs-${{ github.run_id }}", path: logs/, retention-days: 5}
+
+  # ── Short 3 · 21:00 UTC ──────────────────────────────────────
+  short-evening:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: |
+      (github.event_name == 'schedule' && github.event.schedule == '0 21 * * *')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11', cache: pip}
+      - run: sudo apt-get install -y ffmpeg
+      - run: pip install -r requirements.txt
+      - name: Run short pipeline
+        env:
+          PIPELINE_MODE: short
+          SHORT_HOOK_INDEX: "2"
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          YOUTUBE_CLIENT_ID: ${{ secrets.YOUTUBE_CLIENT_ID }}
+          YOUTUBE_CLIENT_SECRET: ${{ secrets.YOUTUBE_CLIENT_SECRET }}
+          YOUTUBE_REFRESH_TOKEN: ${{ secrets.YOUTUBE_REFRESH_TOKEN }}
+        run: python scripts/main.py
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with: {name: "short3-logs-${{ github.run_id }}", path: logs/, retention-days: 5}
