@@ -63,7 +63,14 @@ short_title, short_description, primary_keyword
 
 def _model():
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-    return genai.GenerativeModel("gemini-2.0-flash")
+    for model_name in ["gemini-1.5-flash", "gemini-1.5-flash-8b", "gemini-2.0-flash"]:
+        try:
+            m = genai.GenerativeModel(model_name)
+            print(f"      Using model: {model_name}")
+            return m
+        except Exception:
+            continue
+    return genai.GenerativeModel("gemini-1.5-flash")
 
 
 def load_topics(path="topics.txt"):
