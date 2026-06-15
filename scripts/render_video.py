@@ -132,8 +132,9 @@ def render_short_video(
     print(f"      Short duration: {duration:.1f}s")
 
     concat = _build_video_inputs(clips, duration, SHORT_W, SHORT_H)
-    abs_srt = os.path.abspath(srt_path).replace("\\", "/").replace(":", "\\:")
-    abs_srt_escaped = abs_srt.replace("'", "\\'")
+    abs_srt = os.path.abspath(srt_path)
+    # FFmpeg subtitles filter requires special escaping on Linux
+    abs_srt_escaped = abs_srt.replace("\\", "/").replace("'", "\\'").replace(":", "\\:").replace(" ", "\\ ")
 
     cmd = [
         "ffmpeg", "-y",
@@ -144,7 +145,7 @@ def render_short_video(
             # Crop to 9:16 center crop, then burn subtitles in the center
             f"[0:v]scale={SHORT_W}:{SHORT_H}:force_original_aspect_ratio=increase,"
             f"crop={SHORT_W}:{SHORT_H},"
-            f"subtitles='{abs_srt_escaped}':force_style='{SHORT_SUB_STYLE}'[v]"
+            f"subtitles=filename='{abs_srt_escaped}':force_style='{SHORT_SUB_STYLE}'[v]"
         ),
         "-map", "[v]",
         "-map", "1:a",
