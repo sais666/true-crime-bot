@@ -135,7 +135,7 @@ def run(scripts: dict) -> dict:
 
     print("[2/2] Fetching visuals for short...")
     short_clips = fetch_visuals(
-        scripts["short_script"],
+        scripts["hooks"]["hook_0"],
         output_dir="output/visuals/short",
         count_per_keyword=2,
     )
@@ -165,7 +165,7 @@ def run_short_only(scripts: dict) -> dict:
 
     print("[1/1] Fetching visuals for short...")
     short_clips = fetch_visuals(
-        scripts["short_script"],
+        scripts["hooks"]["hook_0"],
         output_dir="output/visuals/short",
         count_per_keyword=2,
     )
