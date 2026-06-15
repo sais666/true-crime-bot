@@ -1,0 +1,46 @@
+# True crime topics — one per line
+# The bot cycles through these, never repeating until all are used
+# Add your own below — be as specific or general as you like
+
+The disappearance of a hiker in a national park with no trace left behind
+A cold case solved decades later by a DNA database match
+A small town where three residents vanished in the same year
+The mystery of a lighthouse keeper who abandoned his post overnight
+A family that moved into a new home and discovered a hidden room with evidence of a crime
+An art thief who stole millions in paintings and was never caught
+A witness who disappeared the night before testifying in a murder trial
+The unsolved poisoning of an entire dinner party in a remote estate
+A woman who faked her own death and lived under a new identity for 20 years
+The case of a serial arsonist who left no forensic evidence at any scene
+A man who was convicted of a crime he didn't commit and spent 18 years in prison
+The disappearance of a wealthy businessman whose body was never found
+A journalist investigating corruption who vanished before publishing her story
+A hotel where three unconnected guests died on the same floor in the same month
+The mysterious letters sent to a detective that predicted crimes before they happened
+A town where a famous criminal lived undetected for 30 years as a model citizen
+The cold case of a child who walked home from school and never arrived
+A heist where millions were stolen but nothing was ever spent or recovered
+A stalker who terrorized a neighborhood for a decade without being identified
+The unsolved murder of a musician the night before a major record deal was signed
+
+# Additional topics for maximum output
+A detective who solved a cold case using a single photograph found 20 years later
+The woman who faked her own kidnapping and disappeared for six months
+A series of identical notes left at crime scenes that were never traced to anyone
+The missing hiker whose tent was found perfectly set up with no sign of struggle
+A quiet neighbourhood where five residents vanished over the course of one summer
+The nurse who was acquitted of murder but whose next three patients all died mysteriously
+A father who spent 18 years searching for his daughter and found her in the same town
+The lighthouse keeper who sent a distress signal — then was never heard from again
+A cold case reopened after a child found human remains while playing in a field
+The crime scene photograph that contained a reflection nobody noticed for a decade
+A man convicted of murder whose identical twin was never investigated
+The hotel room where three guests died in separate incidents within the same year
+A witness who gave police a perfect description of the suspect — from 40 miles away
+The last known location — a CCTV frame analysed 12 years after it was taken
+A small-town sheriff who was the prime suspect in the crime he was investigating
+The missing persons case that turned out to be connected to a case from another country
+A woman who received letters from her murdered sister for two years after her death
+The cold case that was solved when a teenager recognised a detail in a documentary
+An escape artist who vanished from a locked room and was never seen again
+A neighbourhood watch group that collectively kept a secret for 30 years
