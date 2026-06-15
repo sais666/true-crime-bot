@@ -120,6 +120,8 @@ def grade_photo(img: Image.Image) -> Image.Image:
     for i in range(60):
         alpha = int((i / 60) ** 1.8 * 220)
         margin = i * 9
+        if margin * 2 >= W or margin * 2 >= H:
+            break
         d.rectangle([margin, margin, W-margin, H-margin],
                     outline=(0,0,0,alpha), width=9)
 
