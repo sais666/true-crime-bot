@@ -111,7 +111,19 @@ def run(topics_file="topics.txt"):
     print("[3/4] Generating 3 short hooks...")
     hooks_raw = _call(f"{HOOKS_PROMPT}\n\nFull script:\n{full_script[:3000]}", max_tokens=1024)
     hooks_raw = hooks_raw.replace("```json","").replace("```","").strip()
-    hooks = json.loads(hooks_raw)
+    # Find the JSON object boundaries robustly
+    start = hooks_raw.find("{")
+    end = hooks_raw.rfind("}") + 1
+    if start == -1 or end == 0:
+        # Fallback: build hooks from full script if JSON fails
+        snippet = full_script[:200]
+        hooks = {"hook_0": snippet, "hook_1": snippet, "hook_2": snippet}
+    else:
+        try:
+            hooks = json.loads(hooks_raw[start:end])
+        except Exception:
+            snippet = full_script[:200]
+            hooks = {"hook_0": snippet, "hook_1": snippet, "hook_2": snippet}
     print(f"      Hooks generated: {list(hooks.keys())}")
 
     print("[4/4] Generating CTR-optimised metadata...")
@@ -120,7 +132,9 @@ def run(topics_file="topics.txt"):
         max_tokens=1024,
     )
     meta_raw = meta_raw.replace("```json","").replace("```","").strip()
-    metadata = json.loads(meta_raw)
+    start = meta_raw.find("{")
+    end = meta_raw.rfind("}") + 1
+    metadata = json.loads(meta_raw[start:end])
     print(f"      Title: {metadata.get('youtube_title')}")
 
     result = {
