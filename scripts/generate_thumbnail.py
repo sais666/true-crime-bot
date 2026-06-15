@@ -3,7 +3,7 @@ Thumbnail generator — Option B (Pexels real photo) with Option A (Gemini AI) f
 Produces a 1280x720 JPEG matching true crime channel aesthetics.
 """
 import os, io, json, random, requests
-import google.generativeai as genai
+
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
 W, H = 1280, 720
@@ -65,24 +65,31 @@ def get_background_photo(script_text: str) -> Image.Image | None:
 
 # ── OPTION A: GEMINI AI GENERATED BACKGROUND (fallback) ───────
 def generate_ai_background(topic: str) -> Image.Image | None:
+    """Gemini image generation via REST API — fallback if Pexels fails."""
     try:
-        genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-        model = genai.GenerativeModel("gemini-2.0-flash-exp-image-generation")
+        import base64
+        key = os.environ["GEMINI_API_KEY"]
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key={key}"
         prompt = (
             f"Cinematic dark atmospheric photograph for a true crime YouTube thumbnail. "
             f"Scene: {topic[:80]}. "
             "Style: moody noir, deep shadows, foggy night, photorealistic, "
-            "cinematic colour grade, dark teal and black palette, "
-            "professional photography lighting. No text, no people, no faces. "
-            "16:9 landscape composition. Ultra high quality."
+            "cinematic colour grade, dark teal and black palette. "
+            "No text, no people, no faces. 16:9 landscape composition."
         )
-        response = model.generate_content(
-            prompt,
-            generation_config={"response_modalities": ["image"]},
-        )
-        for part in response.candidates[0].content.parts:
-            if hasattr(part, "inline_data") and part.inline_data:
-                return Image.open(io.BytesIO(part.inline_data.data)).convert("RGB")
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"responseModalities": ["TEXT", "IMAGE"]},
+        }
+        resp = requests.post(url, json=payload, timeout=60)
+        if resp.status_code != 200:
+            print(f"      Gemini image API error: {resp.status_code}")
+            return None
+        data = resp.json()
+        for part in data.get("candidates", [{}])[0].get("content", {}).get("parts", []):
+            if "inlineData" in part:
+                img_bytes = base64.b64decode(part["inlineData"]["data"])
+                return Image.open(io.BytesIO(img_bytes)).convert("RGB")
     except Exception as e:
         print(f"      Gemini image generation failed: {e}")
     return None
@@ -173,7 +180,7 @@ def _shadow_text(draw, text, x, y, font, fill, shadow_col=(0,0,0), blur_r=3, off
     draw.text((x, y), text, font=font, fill=fill)
 
 
-def add_typography(img: Image.Image, title: str, channel: str = "The Archives") -> Image.Image:
+def add_typography(img: Image.Image, title: str, channel: str = "DARK ARCHIVES") -> Image.Image:
     draw = ImageDraw.Draw(img)
     pad = int(W * 0.055)
     max_text_w = W - pad * 2 - 20
