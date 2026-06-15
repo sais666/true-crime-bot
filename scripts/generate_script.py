@@ -3,7 +3,7 @@ Script generator — calls Gemini API directly via requests (no SDK version issu
 """
 import os, json, random, requests
 
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent"
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
 FULL_PROMPT = """You are a professional true crime documentary scriptwriter.
 Write in the style of MrBallen, Eleanor Neale, and Cayleigh Elise.
@@ -68,7 +68,12 @@ def _call(prompt: str, max_tokens: int = 4096) -> str:
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"maxOutputTokens": max_tokens, "temperature": 0.8},
     }
-    resp = requests.post(url, json=payload, timeout=120)
+    resp = requests.post(
+        GEMINI_URL,
+        headers={"x-goog-api-key": key, "Content-Type": "application/json"},
+        json=payload,
+        timeout=120,
+    )
     if resp.status_code != 200:
         raise RuntimeError(f"Gemini API error {resp.status_code}: {resp.text[:500]}")
     data = resp.json()
