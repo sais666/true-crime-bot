@@ -134,7 +134,27 @@ def run(topics_file="topics.txt"):
     meta_raw = meta_raw.replace("```json","").replace("```","").strip()
     start = meta_raw.find("{")
     end = meta_raw.rfind("}") + 1
-    metadata = json.loads(meta_raw[start:end])
+    if start == -1 or end == 0:
+        metadata = {
+            "youtube_title": f"The Case Nobody Could Solve | True Crime Documentary",
+            "youtube_description": f"{full_script[:200]}\n\nNew true crime documentary every day — subscribe so you never miss a case.\n\n#TrueCrime #Mystery #ColdCase #Documentary",
+            "youtube_tags": ["true crime","mystery","cold case","documentary","unsolved","true crime documentary","crime","investigation","missing persons","murder mystery","true crime 2025","unsolved mystery","criminal","detective","forensic"],
+            "short_title": "The Case Nobody Could Solve",
+            "short_description": "Nobody expected this ending. #TrueCrime #Shorts #Mystery",
+            "primary_keyword": "true crime documentary",
+        }
+    else:
+        try:
+            metadata = json.loads(meta_raw[start:end])
+        except Exception:
+            metadata = {
+                "youtube_title": f"{topic[:60]} | True Crime Documentary",
+                "youtube_description": f"{full_script[:200]}\n\nNew true crime documentary every day — subscribe so you never miss a case.\n\n#TrueCrime #Mystery #ColdCase #Documentary",
+                "youtube_tags": ["true crime","mystery","cold case","documentary","unsolved","true crime documentary","crime","investigation","missing persons","murder mystery","true crime 2025","unsolved mystery","criminal","detective","forensic"],
+                "short_title": topic[:38],
+                "short_description": "Nobody expected this ending. #TrueCrime #Shorts #Mystery",
+                "primary_keyword": "true crime documentary",
+            }
     print(f"      Title: {metadata.get('youtube_title')}")
 
     result = {
