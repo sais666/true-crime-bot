@@ -173,7 +173,7 @@ def _shadow_text(draw, text, x, y, font, fill, shadow_col=(0,0,0), blur_r=3, off
     draw.text((x, y), text, font=font, fill=fill)
 
 
-def add_typography(img: Image.Image, title: str, channel: str = "DARK ARCHIVES") -> Image.Image:
+def add_typography(img: Image.Image, title: str, channel: str = "The Archives") -> Image.Image:
     draw = ImageDraw.Draw(img)
     pad = int(W * 0.055)
     max_text_w = W - pad * 2 - 20
